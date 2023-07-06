@@ -6,6 +6,6 @@ import "net/http"
 type Route struct {
 	URI          string
 	Method       string
-	Func         func(http.ResponseWriter, http.Request)
+	Func         func(w http.ResponseWriter, r *http.Request)
 	AuthRequired bool
 }
