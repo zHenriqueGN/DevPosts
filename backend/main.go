@@ -1,10 +1,15 @@
 package main
 
 import (
+	"api/src/config"
 	"api/src/router"
 	"log"
 	"net/http"
 )
+
+func init() {
+	config.LoadEnv()
+}
 
 func main() {
 	log.Println("Starting API...")
