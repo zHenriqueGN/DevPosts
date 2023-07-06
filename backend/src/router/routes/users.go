@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// UserRoutes is a slice of Routes
 var UserRoutes = []Route{
 	{
 		URI:          "/api/users",
