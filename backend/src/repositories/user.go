@@ -16,7 +16,7 @@ func NewUsersRepositorie(db *sql.DB) *Users {
 }
 
 // Create insert a user in database
-func (repository Users) Create(user models.User) (ID uint64, err error) {
+func (repository Users) Create(user models.User) (ID uint, err error) {
 	stmt, err := repository.db.Prepare(
 		"INSERT INTO users (name, userName, email, password) VALUES ($1, $2, $3, $4) RETURNING id",
 	)
