@@ -22,6 +22,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err := json.Unmarshal(requestBody, &user); err != nil {
 		messages.Error(w, http.StatusBadRequest, err)
 	}
+	if err = user.Prepare(); err != nil {
+		messages.Error(w, http.StatusBadRequest, err)
+		return
+	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
