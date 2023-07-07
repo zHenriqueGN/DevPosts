@@ -2,12 +2,11 @@ package controller
 
 import (
 	"api/src/database"
+	"api/src/messages"
 	"api/src/models"
 	"api/src/repositories"
 	"encoding/json"
-	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -15,28 +14,31 @@ import (
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	requestBody, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Fatal(err)
+		messages.Error(w, http.StatusUnprocessableEntity, err)
+		return
 	}
 
 	var user models.User
 	if err := json.Unmarshal(requestBody, &user); err != nil {
-		log.Fatal(err)
+		messages.Error(w, http.StatusBadRequest, err)
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		log.Fatal(err)
+		messages.Error(w, http.StatusInternalServerError, err)
+		return
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepositorie(db)
 	ID, err := repository.Create(user)
 	if err != nil {
-		log.Fatal(err)
+		messages.Error(w, http.StatusInternalServerError, err)
+		return
 	}
+	user.ID = ID
 
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(fmt.Sprintf("New user created with ID %d", ID)))
+	messages.JSON(w, http.StatusCreated, user)
 }
 
 // FetchUsers fetch all the users in database
