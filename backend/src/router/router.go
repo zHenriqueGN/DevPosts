@@ -4,8 +4,8 @@ import (
 	"api/src/router/routes"
 	"log"
 	"net/http"
-	"time"
 
+	"github.com/felixge/httpsnoop"
 	"github.com/gorilla/mux"
 )
 
@@ -13,36 +13,20 @@ import (
 func Generate() (r *mux.Router) {
 	r = mux.NewRouter()
 	r = routes.Config(r)
-	r.Use(logsMiddleware)
+	r.Use(LoggingMiddleware)
 	return
 }
 
-func logsMiddleware(next http.Handler) http.Handler {
+func LoggingMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-
-		res := &responseLogger{w, http.StatusOK}
-		next.ServeHTTP(res, r)
-
-		duration := time.Since(start)
-
+		m := httpsnoop.CaptureMetrics(h, w, r)
 		log.Printf(
-			"%s %s %s %d %v",
+			"%s %s %d %v %d",
 			r.Method,
-			r.RequestURI,
-			r.Proto,
-			res.status,
-			duration,
+			r.URL,
+			m.Code,
+			m.Duration,
+			m.Written,
 		)
 	})
-}
-
-type responseLogger struct {
-	http.ResponseWriter
-	status int
-}
-
-func (r *responseLogger) WriteHeader(statusCode int) {
-	r.status = statusCode
-	r.ResponseWriter.WriteHeader(statusCode)
 }
