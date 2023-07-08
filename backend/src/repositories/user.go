@@ -56,7 +56,7 @@ func (repository Users) FilterByUserName(userName string) (users []models.User, 
 			&user.UserName,
 			&user.Email,
 			&user.Password,
-			&user.CriationDate,
+			&user.CreationDate,
 		); err != nil {
 			return
 		}

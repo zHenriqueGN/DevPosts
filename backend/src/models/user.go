@@ -13,7 +13,7 @@ type User struct {
 	UserName     string    `json:"userName,omitempty"`
 	Email        string    `json:"email,omitempty"`
 	Password     string    `json:"password,omitempty"`
-	CriationDate time.Time `json:"creationDate,omitempty"`
+	CreationDate time.Time `json:"creationDate,omitempty"`
 }
 
 // Prepare call the methods to validate and format the User
