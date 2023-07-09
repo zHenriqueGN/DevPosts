@@ -8,7 +8,7 @@ import (
 
 // User represents a user
 type User struct {
-	ID           uint      `json:"id,omitempty"`
+	ID           uint64    `json:"id,omitempty"`
 	Name         string    `json:"name,omitempty"`
 	UserName     string    `json:"userName,omitempty"`
 	Email        string    `json:"email,omitempty"`
@@ -17,15 +17,15 @@ type User struct {
 }
 
 // Prepare call the methods to validate and format the User
-func (user *User) Prepare() (err error) {
-	if err = user.validate(); err != nil {
+func (user *User) Prepare(stage string) (err error) {
+	if err = user.validate(stage); err != nil {
 		return
 	}
 	user.format()
 	return
 }
 
-func (user *User) validate() (err error) {
+func (user *User) validate(stage string) (err error) {
 	if user.Name == "" {
 		return errors.New("the field Name can't be empty")
 	}
@@ -35,7 +35,7 @@ func (user *User) validate() (err error) {
 	if user.Email == "" {
 		return errors.New("the field Email can't be empty")
 	}
-	if user.Password == "" {
+	if stage == "register" && user.Password == "" {
 		return errors.New("the field Password can't be empty")
 	}
 	return

@@ -17,7 +17,7 @@ func NewUsersRepositorie(db *sql.DB) *Users {
 }
 
 // Create insert a user in database
-func (repository Users) Create(user models.User) (ID uint, err error) {
+func (repository Users) Create(user models.User) (ID uint64, err error) {
 	stmt, err := repository.db.Prepare(
 		"INSERT INTO users (name, userName, email, password) VALUES ($1, $2, $3, $4) RETURNING id",
 	)
@@ -64,19 +64,44 @@ func (repository Users) FilterByUserName(userName string) (users []models.User, 
 	return
 }
 
-func (repository Users) GetById(id int) (user models.User, err error) {
+// GetById fetch an user by id
+func (repository Users) GetById(id uint64) (user models.User, err error) {
 	row, err := repository.db.Query(
 		"SELECT id, name, userName, email, creationDate FROM users WHERE id=$1", id,
 	)
 	if err != nil {
 		return
 	}
+	defer row.Close()
 
 	if row.Next() {
-		err = row.Scan(&user.ID, &user.Name, &user.UserName, &user.Email, &user.CreationDate)
+		err = row.Scan(
+			&user.ID,
+			&user.Name,
+			&user.UserName,
+			&user.Email,
+			&user.CreationDate,
+		)
 		if err != nil {
 			return
 		}
+	}
+
+	return
+}
+
+// Update updates an user and returns the updated user
+func (repository Users) Update(user models.User) (err error) {
+	stmt, err := repository.db.Prepare(
+		"UPDATE users SET name=$1, userName=$2, email=$3 WHERE id=$4",
+	)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	if _, err = stmt.Exec(user.Name, user.UserName, user.Email, user.ID); err != nil {
+		return
 	}
 
 	return
