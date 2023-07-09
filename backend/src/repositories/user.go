@@ -40,7 +40,7 @@ func (repository Users) FilterByUserName(userName string) (users []models.User, 
 	userName = fmt.Sprintf("%%%s%%", userName)
 
 	rows, err := repository.db.Query(
-		"SELECT id, name, userName, email, creationDate FROM users WHERE userName LIKE $1;", userName,
+		"SELECT id, name, userName, email FROM users WHERE userName LIKE $1;", userName,
 	)
 	if err != nil {
 		return
@@ -54,7 +54,6 @@ func (repository Users) FilterByUserName(userName string) (users []models.User, 
 			&user.Name,
 			&user.UserName,
 			&user.Email,
-			&user.CreationDate,
 		); err != nil {
 			return
 		}
@@ -67,7 +66,7 @@ func (repository Users) FilterByUserName(userName string) (users []models.User, 
 // GetById fetch an user by id
 func (repository Users) GetById(id uint64) (user models.User, err error) {
 	row, err := repository.db.Query(
-		"SELECT id, name, userName, email, creationDate FROM users WHERE id=$1", id,
+		"SELECT id, name, userName, email FROM users WHERE id=$1", id,
 	)
 	if err != nil {
 		return
@@ -80,7 +79,6 @@ func (repository Users) GetById(id uint64) (user models.User, err error) {
 			&user.Name,
 			&user.UserName,
 			&user.Email,
-			&user.CreationDate,
 		)
 		if err != nil {
 			return
