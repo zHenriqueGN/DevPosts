@@ -88,7 +88,7 @@ func FetchUser(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	repository := repositories.NewUsersRepositorie(db)
-	user, err := repository.GetById(uint(id))
+	user, err := repository.GetById(id)
 	if err != nil {
 		messages.Error(w, http.StatusInternalServerError, err)
 		return
@@ -138,6 +138,17 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	repository := repositories.NewUsersRepositorie(db)
+
+	user, err = repository.GetById(id)
+	if err != nil {
+		messages.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if user.ID != id {
+		messages.JSON(w, http.StatusNotFound, nil)
+		return
+	}
 
 	if err := repository.Update(user); err != nil {
 		messages.Error(w, http.StatusInternalServerError, err)
