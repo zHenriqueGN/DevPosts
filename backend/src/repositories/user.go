@@ -63,3 +63,21 @@ func (repository Users) FilterByUserName(userName string) (users []models.User, 
 
 	return
 }
+
+func (repository Users) GetById(id int) (user models.User, err error) {
+	row, err := repository.db.Query(
+		"SELECT id, name, userName, email, creationDate FROM users WHERE id=$1", id,
+	)
+	if err != nil {
+		return
+	}
+
+	if row.Next() {
+		err = row.Scan(&user.ID, &user.Name, &user.UserName, &user.Email, &user.CreationDate)
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
