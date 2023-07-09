@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"api/src/database"
-	"api/src/messages"
-	"api/src/models"
-	"api/src/repositories"
+	"api/internal/database"
+	"api/internal/messages"
+	"api/internal/models"
+	"api/internal/repositories"
 	"encoding/json"
 	"io"
 	"net/http"

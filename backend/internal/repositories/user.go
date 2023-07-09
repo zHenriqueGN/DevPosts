@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"api/src/models"
+	"api/internal/models"
 	"database/sql"
 	"fmt"
 )
