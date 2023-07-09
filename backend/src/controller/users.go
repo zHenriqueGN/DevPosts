@@ -73,21 +73,29 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 // FetchUser fetch an user in database
 func FetchUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	id, err := strconv.ParseInt(params["id"], 10, 32)
+	id, err := strconv.ParseUint(params["id"], 10, 32)
 	if err != nil {
 		messages.Error(w, http.StatusBadRequest, err)
+		return
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
 		messages.Error(w, http.StatusInternalServerError, err)
+		return
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepositorie(db)
-	user, err := repository.GetById(id)
+	user, err := repository.GetById(uint(id))
 	if err != nil {
 		messages.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if user.ID != id {
+		messages.JSON(w, http.StatusNotFound, nil)
+		return
 	}
 
 	messages.JSON(w, http.StatusOK, user)
@@ -96,7 +104,7 @@ func FetchUser(w http.ResponseWriter, r *http.Request) {
 // UpdateUser update an user in database
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	id, err := strconv.ParseInt(params["id"], 10, 32)
+	id, err := strconv.ParseUint(params["id"], 10, 32)
 	if err != nil {
 		messages.Error(w, http.StatusBadRequest, err)
 	}
@@ -111,7 +119,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if err = json.Unmarshal(requestBody, &user); err != nil {
 		messages.Error(w, http.StatusBadRequest, err)
 	}
-	user.ID = uint(id)
+	user.ID = id
 
 	if err = user.Prepare("update"); err != nil {
 		messages.Error(w, http.StatusBadRequest, err)
