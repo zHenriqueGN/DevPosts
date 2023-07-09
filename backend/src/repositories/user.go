@@ -64,7 +64,7 @@ func (repository Users) FilterByUserName(userName string) (users []models.User, 
 	return
 }
 
-func (repository Users) GetById(id int) (user models.User, err error) {
+func (repository Users) GetById(id int64) (user models.User, err error) {
 	row, err := repository.db.Query(
 		"SELECT id, name, userName, email, creationDate FROM users WHERE id=$1", id,
 	)
