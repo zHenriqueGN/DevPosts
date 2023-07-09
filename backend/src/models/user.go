@@ -17,15 +17,15 @@ type User struct {
 }
 
 // Prepare call the methods to validate and format the User
-func (user *User) Prepare() (err error) {
-	if err = user.validate(); err != nil {
+func (user *User) Prepare(stage string) (err error) {
+	if err = user.validate(stage); err != nil {
 		return
 	}
 	user.format()
 	return
 }
 
-func (user *User) validate() (err error) {
+func (user *User) validate(stage string) (err error) {
 	if user.Name == "" {
 		return errors.New("the field Name can't be empty")
 	}
@@ -35,7 +35,7 @@ func (user *User) validate() (err error) {
 	if user.Email == "" {
 		return errors.New("the field Email can't be empty")
 	}
-	if user.Password == "" {
+	if stage == "register" && user.Password == "" {
 		return errors.New("the field Password can't be empty")
 	}
 	return
