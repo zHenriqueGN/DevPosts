@@ -8,12 +8,12 @@ import (
 
 // User represents a user
 type User struct {
-	ID           uint64    `json:"id,omitempty"`
-	Name         string    `json:"name,omitempty"`
-	UserName     string    `json:"userName,omitempty"`
-	Email        string    `json:"email,omitempty"`
-	Password     string    `json:"password,omitempty"`
-	CreationDate time.Time `json:"creationDate,omitempty"`
+	ID           uint64     `json:"id,omitempty"`
+	Name         string     `json:"name,omitempty"`
+	UserName     string     `json:"userName,omitempty"`
+	Email        string     `json:"email,omitempty"`
+	Password     string     `json:"password,omitempty"`
+	CreationDate *time.Time `json:"creationDate,omitempty"`
 }
 
 // Prepare call the methods to validate and format the User
