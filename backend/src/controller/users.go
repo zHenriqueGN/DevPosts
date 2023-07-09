@@ -25,6 +25,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.Unmarshal(requestBody, &user); err != nil {
 		messages.Error(w, http.StatusBadRequest, err)
+		return
 	}
 	if err = user.Prepare("register"); err != nil {
 		messages.Error(w, http.StatusBadRequest, err)
@@ -107,27 +108,32 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(params["id"], 10, 32)
 	if err != nil {
 		messages.Error(w, http.StatusBadRequest, err)
+		return
 	}
 
 	requestBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		messages.Error(w, http.StatusUnprocessableEntity, err)
+		return
 	}
 
 	var user models.User
 
 	if err = json.Unmarshal(requestBody, &user); err != nil {
 		messages.Error(w, http.StatusBadRequest, err)
+		return
 	}
 	user.ID = id
 
 	if err = user.Prepare("update"); err != nil {
 		messages.Error(w, http.StatusBadRequest, err)
+		return
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
 		messages.Error(w, http.StatusInternalServerError, err)
+		return
 	}
 	defer db.Close()
 
@@ -135,6 +141,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err := repository.Update(user); err != nil {
 		messages.Error(w, http.StatusInternalServerError, err)
+		return
 	}
 
 	messages.JSON(w, http.StatusNoContent, nil)
