@@ -1,7 +1,7 @@
 package router
 
 import (
-	"api/src/router/routes"
+	"api/internal/router/routes"
 	"log"
 	"net/http"
 

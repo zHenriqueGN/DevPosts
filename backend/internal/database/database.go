@@ -1,7 +1,7 @@
 package database
 
 import (
-	"api/src/config"
+	"api/internal/config"
 	"database/sql"
 
 	_ "github.com/lib/pq"
