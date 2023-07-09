@@ -90,7 +90,7 @@ func (repository Users) GetById(id uint64) (user models.User, err error) {
 	return
 }
 
-// Update updates an user and returns the updated user
+// Update updates an user in database
 func (repository Users) Update(user models.User) (err error) {
 	stmt, err := repository.db.Prepare(
 		"UPDATE users SET name=$1, userName=$2, email=$3 WHERE id=$4",
@@ -101,6 +101,22 @@ func (repository Users) Update(user models.User) (err error) {
 	defer stmt.Close()
 
 	if _, err = stmt.Exec(user.Name, user.UserName, user.Email, user.ID); err != nil {
+		return
+	}
+
+	return
+}
+
+// Delete deletes an user in database
+func (repository Users) Delete(id uint64) (err error) {
+	stmt, err := repository.db.Prepare("DELETE FROM users WHERE id=$1")
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
 		return
 	}
 
