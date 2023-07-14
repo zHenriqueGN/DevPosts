@@ -1,6 +1,7 @@
 package models
 
 import (
+	"api/internal/security"
 	"errors"
 	"strings"
 	"time"
@@ -23,7 +24,9 @@ func (user *User) Prepare(stage string) (err error) {
 	if err = user.validate(stage); err != nil {
 		return
 	}
-	user.format()
+	if err = user.format(stage); err != nil {
+		return
+	}
 	return
 }
 
@@ -46,8 +49,17 @@ func (user *User) validate(stage string) (err error) {
 	return
 }
 
-func (user *User) format() {
+func (user *User) format(stage string) (err error) {
 	user.Name = strings.TrimSpace(user.Name)
 	user.UserName = strings.TrimSpace(user.UserName)
 	user.Email = strings.TrimSpace(user.Email)
+
+	if stage == "register" {
+		passwordWithHash, err := security.HashPassword(user.Password)
+		if err != nil {
+			return err
+		}
+		user.Password = string(passwordWithHash)
+	}
+	return
 }
