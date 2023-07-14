@@ -3,6 +3,7 @@ package main
 import (
 	"api/internal/config"
 	"api/internal/router"
+	"fmt"
 )
 
 func init() {
@@ -11,5 +12,5 @@ func init() {
 
 func main() {
 	app := router.Generate()
-	app.Listen(":8000")
+	app.Listen(fmt.Sprintf(":%s", config.APIPort))
 }
