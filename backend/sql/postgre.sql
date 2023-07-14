@@ -5,6 +5,6 @@ CREATE TABLE users (
     name varchar(50) not null,
     userName varchar(50) not null unique,
     email varchar(50) not null unique,
-    password varchar(20) not null,
+    password varchar not null,
     creationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
