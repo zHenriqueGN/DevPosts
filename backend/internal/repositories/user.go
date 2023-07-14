@@ -12,12 +12,12 @@ type Users struct {
 }
 
 // NewUsersRepositorie a new repositorie of users
-func NewUsersRepositorie(db *sql.DB) *Users {
+func NewUsersRepository(db *sql.DB) *Users {
 	return &Users{db}
 }
 
 // Create insert a user in database
-func (repository Users) Create(user models.User) (ID uint64, err error) {
+func (repository Users) Create(user models.User) (ID int, err error) {
 	stmt, err := repository.db.Prepare(
 		"INSERT INTO users (name, userName, email, password) VALUES ($1, $2, $3, $4) RETURNING id",
 	)
@@ -64,7 +64,7 @@ func (repository Users) FilterByUserName(userName string) (users []models.User, 
 }
 
 // GetById fetch an user by id
-func (repository Users) GetById(id uint64) (user models.User, err error) {
+func (repository Users) GetById(id int) (user models.User, err error) {
 	row, err := repository.db.Query(
 		"SELECT id, name, userName, email FROM users WHERE id=$1", id,
 	)
@@ -106,7 +106,7 @@ func (repository Users) Update(user models.User) (err error) {
 }
 
 // Delete deletes an user in database
-func (repository Users) Delete(id uint64) (err error) {
+func (repository Users) Delete(id int) (err error) {
 	stmt, err := repository.db.Prepare("DELETE FROM users WHERE id=$1")
 	if err != nil {
 		return

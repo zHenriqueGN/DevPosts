@@ -2,38 +2,39 @@ package routes
 
 import (
 	"api/internal/controller"
-	"net/http"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 // UserRoutes is a slice of Routes
 var UserRoutes = []Route{
 	{
-		URI:          "/api/users",
-		Method:       http.MethodPost,
+		URI:          "/",
+		Method:       fiber.MethodPost,
 		Func:         controller.CreateUser,
 		AuthRequired: false,
 	},
 	{
-		URI:          "/api/users",
-		Method:       http.MethodGet,
+		URI:          "/",
+		Method:       fiber.MethodGet,
 		Func:         controller.FetchUsers,
 		AuthRequired: false,
 	},
 	{
-		URI:          "/api/users/{id}",
-		Method:       http.MethodGet,
+		URI:          "/:id",
+		Method:       fiber.MethodGet,
 		Func:         controller.FetchUser,
 		AuthRequired: false,
 	},
 	{
-		URI:          "/api/users/{id}",
-		Method:       http.MethodPut,
+		URI:          "/:id",
+		Method:       fiber.MethodPut,
 		Func:         controller.UpdateUser,
 		AuthRequired: false,
 	},
 	{
-		URI:          "/api/users/{id}",
-		Method:       http.MethodDelete,
+		URI:          "/:id",
+		Method:       fiber.MethodDelete,
 		Func:         controller.DeleteUser,
 		AuthRequired: false,
 	},
