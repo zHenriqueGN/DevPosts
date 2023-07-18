@@ -16,6 +16,9 @@ type Route struct {
 func Config(app *fiber.App) *fiber.App {
 	api := app.Group("/api")
 
+	auth := api.Group("/auth")
+	auth.Add(LoginRoute.Method, LoginRoute.URI, LoginRoute.Func)
+
 	users := api.Group("/users")
 	for _, route := range UserRoutes {
 		users.Add(route.Method, route.URI, route.Func)

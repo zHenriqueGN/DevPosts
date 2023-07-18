@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// UserRoutes is a slice of Routes
+// UserRoutes is a slice of Routes to user functionalities
 var UserRoutes = []Route{
 	{
 		URI:          "/",
