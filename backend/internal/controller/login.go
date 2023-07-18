@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"api/internal/auth"
 	"api/internal/database"
 	"api/internal/messages"
 	"api/internal/models"
@@ -35,5 +36,6 @@ func Login(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	return c.SendStatus(fiber.StatusOK)
+	token, _ := auth.GenerateToken(tempUser.ID)
+	return c.Status(fiber.StatusOK).JSON(messages.Message(token))
 }
