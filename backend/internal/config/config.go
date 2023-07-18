@@ -9,8 +9,14 @@ import (
 )
 
 var (
-	DBConn  string
+	// DBConn is the connection string to database
+	DBConn string
+
+	// APIPort is the port on the API will be running
 	APIPort string
+
+	// SecretKey is the key used to sign the web-token
+	SecretKey string
 )
 
 // LoadEnv loads the environment variables
@@ -28,4 +34,5 @@ func LoadEnv() {
 		os.Getenv("DB_NAME"),
 	)
 	APIPort = os.Getenv("API_PORT")
+	SecretKey = os.Getenv("SECRET_KEY")
 }
