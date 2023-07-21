@@ -6,7 +6,6 @@ import (
 	"api/internal/messages"
 	"api/internal/models"
 	"api/internal/repositories"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -60,7 +59,7 @@ func FetchUsers(c *fiber.Ctx) error {
 
 // FetchUser fetch an user in database
 func FetchUser(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
+	ID, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
 	}
@@ -72,12 +71,12 @@ func FetchUser(c *fiber.Ctx) error {
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
-	user, err := repository.GetById(id)
+	user, err := repository.GetById(ID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
 	}
 
-	if user.ID != id {
+	if user.ID != ID {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
@@ -86,20 +85,19 @@ func FetchUser(c *fiber.Ctx) error {
 
 // UpdateUser update an user in database
 func UpdateUser(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
+	ID, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
 	}
 
 	authorization := c.GetReqHeaders()["Authorization"]
 
-	userID, err := auth.GetUserIDFromToken(authorization)
+	tokenUserID, err := auth.GetTokenUserID(authorization)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
 	}
 
-	fmt.Println(id, userID)
-	if id != userID {
+	if ID != tokenUserID {
 		return c.Status(fiber.StatusForbidden).JSON(messages.Message("You can't update someone else's user"))
 	}
 
@@ -109,7 +107,7 @@ func UpdateUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(messages.Error(err))
 	}
 
-	user.ID = id
+	user.ID = ID
 
 	if err = user.Prepare("update"); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
@@ -123,12 +121,12 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	repository := repositories.NewUsersRepository(db)
 
-	tempUser, err := repository.GetById(id)
+	tempUser, err := repository.GetById(ID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
 	}
 
-	if tempUser.ID != id {
+	if tempUser.ID != ID {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
@@ -141,19 +139,19 @@ func UpdateUser(c *fiber.Ctx) error {
 
 // DeleteUser delete an user from database
 func DeleteUser(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
+	ID, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
 	}
 
 	authorization := c.GetReqHeaders()["Authorization"]
 
-	userID, err := auth.GetUserIDFromToken(authorization)
+	tokenUserID, err := auth.GetTokenUserID(authorization)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
 	}
 
-	if id != userID {
+	if ID != tokenUserID {
 		return c.Status(fiber.StatusForbidden).JSON(messages.Message("You can't update someone else's user"))
 	}
 
@@ -164,16 +162,16 @@ func DeleteUser(c *fiber.Ctx) error {
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
-	tempUser, err := repository.GetById(id)
+	tempUser, err := repository.GetById(ID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
 	}
 
-	if tempUser.ID != id {
+	if tempUser.ID != ID {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	err = repository.Delete(id)
+	err = repository.Delete(ID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
 	}

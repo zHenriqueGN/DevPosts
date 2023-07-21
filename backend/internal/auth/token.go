@@ -24,7 +24,7 @@ func GenerateToken(userID int) (string, error) {
 }
 
 // GetUserID extracts the user ID from JWT token an return it
-func GetUserIDFromToken(authorization string) (userID int, err error) {
+func GetTokenUserID(authorization string) (tokenUserID int, err error) {
 	JWTTokenString := getTokenFromHeaders(authorization)
 	JWTToken, err := jwt.Parse(JWTTokenString, returnSecrectKey)
 	if err != nil {
@@ -32,14 +32,13 @@ func GetUserIDFromToken(authorization string) (userID int, err error) {
 	}
 
 	if permissions, ok := JWTToken.Claims.(jwt.MapClaims); ok && JWTToken.Valid {
-		var ID int64
-
-		ID, err = strconv.ParseInt(fmt.Sprintf("%.f", permissions["userID"]), 10, 64)
+		var userID int64
+		userID, err = strconv.ParseInt(fmt.Sprintf("%.f", permissions["userID"]), 10, 64)
 		if err != nil {
 			return
 		}
 
-		userID = int(ID)
+		tokenUserID = int(userID)
 
 		return
 	}
