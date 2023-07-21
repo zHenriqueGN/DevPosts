@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"api/internal/auth"
 	"api/internal/database"
 	"api/internal/messages"
 	"api/internal/models"
 	"api/internal/repositories"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -89,6 +91,18 @@ func UpdateUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
 	}
 
+	authorization := c.GetReqHeaders()["Authorization"]
+
+	userID, err := auth.GetUserIDFromToken(authorization)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+	}
+
+	fmt.Println(id, userID)
+	if id != userID {
+		return c.Status(fiber.StatusForbidden).JSON(messages.Message("You can't update someone else's user"))
+	}
+
 	var user models.User
 	err = c.BodyParser(&user)
 	if err != nil {
@@ -130,6 +144,17 @@ func DeleteUser(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+	}
+
+	authorization := c.GetReqHeaders()["Authorization"]
+
+	userID, err := auth.GetUserIDFromToken(authorization)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+	}
+
+	if id != userID {
+		return c.Status(fiber.StatusForbidden).JSON(messages.Message("You can't update someone else's user"))
 	}
 
 	db, err := database.ConnectToDB()
