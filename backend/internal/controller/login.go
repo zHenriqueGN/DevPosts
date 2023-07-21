@@ -36,6 +36,10 @@ func Login(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	token, _ := auth.GenerateToken(tempUser.ID)
+	token, err := auth.GenerateToken(tempUser.ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+	}
+
 	return c.Status(fiber.StatusOK).JSON(messages.Message(token))
 }
