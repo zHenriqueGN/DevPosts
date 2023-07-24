@@ -3,7 +3,7 @@ package routes
 import (
 	"api/internal/config"
 
-	jwtware "github.com/gofiber/contrib/jwt"
+	jwt "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/gofiber/fiber/v2/middleware/logger"
