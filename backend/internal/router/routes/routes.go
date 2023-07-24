@@ -30,9 +30,9 @@ func Config(app *fiber.App) *fiber.App {
 	users := api.Group("/users")
 	for _, route := range UserRoutes {
 		if route.AuthRequired {
-			users.Add(route.Method, route.URI, jwt.New(
-				jwt.Config{
-					SigningKey:     jwt.SigningKey{Key: []byte(config.SecretKey)},
+			users.Add(route.Method, route.URI, jwtware.New(
+				jwtware.Config{
+					SigningKey:     jwtware.SigningKey{Key: []byte(config.SecretKey)},
 					SuccessHandler: route.Func,
 				}))
 		} else {
