@@ -5,6 +5,7 @@ import (
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
+
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
@@ -26,17 +27,17 @@ func Config(app *fiber.App) *fiber.App {
 	auth := api.Group("/auth")
 	auth.Add(LoginRoute.Method, LoginRoute.URI, LoginRoute.Func)
 
-	app.Use(
-		jwtware.New(
-			jwtware.Config{
-				SigningKey: jwtware.SigningKey{Key: []byte(config.SecretKey)},
-			},
-		),
-	)
-
 	users := api.Group("/users")
 	for _, route := range UserRoutes {
-		users.Add(route.Method, route.URI, route.Func)
+		if route.AuthRequired {
+			users.Add(route.Method, route.URI, jwtware.New(
+				jwtware.Config{
+					SigningKey:     jwtware.SigningKey{Key: []byte(config.SecretKey)},
+					SuccessHandler: route.Func,
+				}))
+		} else {
+			users.Add(route.Method, route.URI, route.Func)
+		}
 	}
 
 	return app
