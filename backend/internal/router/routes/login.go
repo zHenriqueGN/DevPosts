@@ -11,5 +11,5 @@ var LoginRoute = Route{
 	URI:          "/login",
 	Method:       fiber.MethodPost,
 	Func:         controller.Login,
-	AuthRequired: true,
+	AuthRequired: false,
 }
