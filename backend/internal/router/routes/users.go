@@ -18,24 +18,24 @@ var UserRoutes = []Route{
 		URI:          "/",
 		Method:       fiber.MethodGet,
 		Func:         controller.FetchUsers,
-		AuthRequired: false,
+		AuthRequired: true,
 	},
 	{
 		URI:          "/:id",
 		Method:       fiber.MethodGet,
 		Func:         controller.FetchUser,
-		AuthRequired: false,
+		AuthRequired: true,
 	},
 	{
 		URI:          "/:id",
 		Method:       fiber.MethodPut,
 		Func:         controller.UpdateUser,
-		AuthRequired: false,
+		AuthRequired: true,
 	},
 	{
 		URI:          "/:id",
 		Method:       fiber.MethodDelete,
 		Func:         controller.DeleteUser,
-		AuthRequired: false,
+		AuthRequired: true,
 	},
 }
