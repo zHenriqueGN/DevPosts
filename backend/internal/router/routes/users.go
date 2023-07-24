@@ -38,4 +38,10 @@ var UserRoutes = []Route{
 		Func:         controller.DeleteUser,
 		AuthRequired: true,
 	},
+	{
+		URI:          "/:id/follow",
+		Method:       fiber.MethodPost,
+		Func:         controller.FollowUSer,
+		AuthRequired: true,
+	},
 }
