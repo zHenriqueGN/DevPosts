@@ -140,3 +140,21 @@ func (repository Users) SearchByEmail(email string) (user models.User, err error
 
 	return
 }
+
+// Follow insert the user and the follower ID in the database, which represents the following action
+func (repository Users) Follow(userID, followerID int) (err error) {
+	stmt, err := repository.db.Prepare(
+		"INSERT INTO followers (user_id, follower_id) VALUES ($1, $2)",
+	)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(userID, followerID)
+	if err != nil {
+		return
+	}
+
+	return
+}
