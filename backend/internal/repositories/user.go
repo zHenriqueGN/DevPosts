@@ -158,3 +158,21 @@ func (repository Users) Follow(userID, followerID int) (err error) {
 
 	return
 }
+
+// Unfollow delete the user and the follower ID in the databasem, which represents the unfollowing action
+func (repository Users) Unfollow(userID, followerID int) (err error) {
+	stmt, err := repository.db.Prepare(
+		"DELETE FROM followers WHERE user_id=$1 AND follower_id=$2",
+	)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(userID, followerID)
+	if err != nil {
+		return err
+	}
+
+	return
+}
