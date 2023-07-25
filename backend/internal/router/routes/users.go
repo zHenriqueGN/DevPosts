@@ -50,4 +50,10 @@ var UserRoutes = []Route{
 		Func:         controller.UnfollowUser,
 		AuthRequired: true,
 	},
+	{
+		URI:          "/:id/followers",
+		Method:       fiber.MethodGet,
+		Func:         controller.GetFollowers,
+		AuthRequired: true,
+	},
 }

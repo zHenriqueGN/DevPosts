@@ -176,3 +176,35 @@ func (repository Users) Unfollow(userID, followerID int) (err error) {
 
 	return
 }
+
+// GetFollowers get all the followers of a giver user in the database
+func (repository Users) GetFollowers(userID int) (followers []models.User, err error) {
+	rows, err := repository.db.Query(
+		`
+		SELECT U.id, U.name, U.username, U.email, U.creationdate
+		FROM users U INNER JOIN followers F
+		ON U.id = F.follower_id
+		WHERE F.user_id = $1
+		`, userID,
+	)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var follower models.User
+		if err = rows.Scan(
+			&follower.ID,
+			&follower.Name,
+			&follower.UserName,
+			&follower.Email,
+			&follower.CreationDate,
+		); err != nil {
+			return
+		}
+		followers = append(followers, follower)
+	}
+
+	return
+}
