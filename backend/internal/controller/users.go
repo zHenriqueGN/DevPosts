@@ -179,7 +179,7 @@ func DeleteUser(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
-// Follow user allow an user to follow another user
+// FollowUser allow an user to follow another user
 func FollowUser(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
@@ -212,6 +212,7 @@ func FollowUser(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
+// UnfollowUser allow an user to unfollow another user
 func UnfollowUser(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
@@ -242,4 +243,30 @@ func UnfollowUser(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
+}
+
+// GetFollowers get all the followers of a giver user
+func GetFollowers(c *fiber.Ctx) error {
+	ID, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+	}
+
+	db, err := database.ConnectToDB()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+	}
+	defer db.Close()
+
+	repository := repositories.NewUsersRepository(db)
+	followers, err := repository.GetFollowers(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+	}
+
+	if followers == nil {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(followers)
 }
