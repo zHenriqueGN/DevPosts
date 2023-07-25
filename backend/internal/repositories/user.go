@@ -208,3 +208,35 @@ func (repository Users) GetFollowers(userID int) (followers []models.User, err e
 
 	return
 }
+
+// GetFollowings get all the followings of a giver user in the database
+func (repository Users) GetFollowings(userID int) (followings []models.User, err error) {
+	rows, err := repository.db.Query(
+		`
+		SELECT U.id, U.name, U.username, U.email, U.creationdate
+		FROM users U INNER JOIN followers F
+		ON U.id = F.user_id
+		WHERE F.follower_id = $1
+		`, userID,
+	)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var following models.User
+		if err = rows.Scan(
+			&following.ID,
+			&following.Name,
+			&following.UserName,
+			&following.Email,
+			&following.CreationDate,
+		); err != nil {
+			return
+		}
+		followings = append(followings, following)
+	}
+
+	return
+}
