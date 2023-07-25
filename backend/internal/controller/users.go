@@ -270,3 +270,29 @@ func GetFollowers(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(followers)
 }
+
+// GetFollowings get all the followings of a giver user
+func GetFollowings(c *fiber.Ctx) error {
+	ID, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+	}
+
+	db, err := database.ConnectToDB()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+	}
+	defer db.Close()
+
+	repository := repositories.NewUsersRepository(db)
+	followings, err := repository.GetFollowings(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+	}
+
+	if followings == nil {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(followings)
+}
