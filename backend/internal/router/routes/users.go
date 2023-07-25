@@ -56,4 +56,10 @@ var UserRoutes = []Route{
 		Func:         controller.GetFollowers,
 		AuthRequired: true,
 	},
+	{
+		URI:          "/:id/followings",
+		Method:       fiber.MethodGet,
+		Func:         controller.GetFollowings,
+		AuthRequired: true,
+	},
 }
