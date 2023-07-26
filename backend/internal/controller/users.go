@@ -3,7 +3,6 @@ package controller
 import (
 	"api/internal/auth"
 	"api/internal/database"
-	"api/internal/messages"
 	"api/internal/models"
 	"api/internal/repositories"
 
@@ -15,23 +14,23 @@ func CreateUser(c *fiber.Ctx) error {
 	var user models.User
 	err := c.BodyParser(&user)
 	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(messages.Error(err))
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": err})
 	}
 
 	if err = user.Prepare("register"); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	ID, err := repository.Create(user)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 	user.ID = ID
 
@@ -44,14 +43,14 @@ func FetchUsers(c *fiber.Ctx) error {
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	users, err := repository.FilterByUserName(userName)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(users)
@@ -61,19 +60,19 @@ func FetchUsers(c *fiber.Ctx) error {
 func FetchUser(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	user, err := repository.GetById(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 
 	if user.ID != ID {
@@ -87,35 +86,35 @@ func FetchUser(c *fiber.Ctx) error {
 func UpdateUser(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	authorization := c.GetReqHeaders()["Authorization"]
 
 	tokenUserID, err := auth.GetTokenUserID(authorization)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	if ID != tokenUserID {
-		return c.Status(fiber.StatusForbidden).JSON(messages.Message("You can't update someone else's user"))
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "You can't update someone else's user"})
 	}
 
 	var user models.User
 	err = c.BodyParser(&user)
 	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(messages.Error(err))
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": err})
 	}
 
 	user.ID = ID
 
 	if err = user.Prepare("update"); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 	defer db.Close()
 
@@ -123,7 +122,7 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	tempUser, err := repository.GetById(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 
 	if tempUser.ID != ID {
@@ -131,7 +130,7 @@ func UpdateUser(c *fiber.Ctx) error {
 	}
 
 	if err := repository.Update(user); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
@@ -141,30 +140,30 @@ func UpdateUser(c *fiber.Ctx) error {
 func DeleteUser(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	authorization := c.GetReqHeaders()["Authorization"]
 
 	tokenUserID, err := auth.GetTokenUserID(authorization)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	if ID != tokenUserID {
-		return c.Status(fiber.StatusForbidden).JSON(messages.Message("You can't update someone else's user"))
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "You can't update someone else's user"})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	tempUser, err := repository.GetById(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 
 	if tempUser.ID != ID {
@@ -173,7 +172,7 @@ func DeleteUser(c *fiber.Ctx) error {
 
 	err = repository.Delete(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
@@ -183,30 +182,30 @@ func DeleteUser(c *fiber.Ctx) error {
 func FollowUser(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	authorization := c.GetReqHeaders()["Authorization"]
 
 	tokenUserID, err := auth.GetTokenUserID(authorization)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	if ID == tokenUserID {
-		return c.Status(fiber.StatusForbidden).JSON(messages.Message("You can't follow yourself"))
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "You can't follow yourself"})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	err = repository.Follow(ID, tokenUserID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
@@ -216,30 +215,30 @@ func FollowUser(c *fiber.Ctx) error {
 func UnfollowUser(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	authorization := c.GetReqHeaders()["Authorization"]
 
 	tokenUserID, err := auth.GetTokenUserID(authorization)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	if ID == tokenUserID {
-		return c.Status(fiber.StatusForbidden).JSON(messages.Message("You can't unfollow yourself"))
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "You can't unfollow yourself"})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	err = repository.Unfollow(ID, tokenUserID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
@@ -249,19 +248,19 @@ func UnfollowUser(c *fiber.Ctx) error {
 func GetFollowers(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	followers, err := repository.GetFollowers(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 
 	if followers == nil {
@@ -275,19 +274,19 @@ func GetFollowers(c *fiber.Ctx) error {
 func GetFollowings(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(messages.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	followings, err := repository.GetFollowings(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(messages.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
 	}
 
 	if followings == nil {
