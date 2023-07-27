@@ -63,7 +63,7 @@ var UserRoutes = []Route{
 		AuthRequired: true,
 	},
 	{
-		URI:          "/:id/update_passoword",
+		URI:          "/:id/update_password",
 		Method:       fiber.MethodPost,
 		Func:         controller.UpdatePassword,
 		AuthRequired: true,
