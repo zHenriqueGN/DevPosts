@@ -5,6 +5,8 @@ import (
 	"api/internal/database"
 	"api/internal/models"
 	"api/internal/repositories"
+	"api/internal/security"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -294,4 +296,62 @@ func GetFollowings(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(followings)
+}
+
+// UpdatePassword updates an user passoword
+func UpdatePassword(c *fiber.Ctx) error {
+	ID, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	authorization := c.GetReqHeaders()["Authorization"]
+	tokenUserID, err := auth.GetTokenUserID(authorization)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	if ID != tokenUserID {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "You can't update someone else's password"})
+	}
+
+	var passwordUpdate models.PasswordUpdate
+	err = c.BodyParser(&passwordUpdate)
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": err})
+	}
+
+	if passwordUpdate.OldPassword == "" || passwordUpdate.NewPassword == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "The password can't be empty"})
+	}
+
+	db, err := database.ConnectToDB()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+	}
+	defer db.Close()
+
+	repository := repositories.NewUsersRepository(db)
+	dbUserPassword, err := repository.FetchPassword(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+	}
+
+	err = security.ComparePasswordWithHash(dbUserPassword, passwordUpdate.OldPassword)
+	if err != nil {
+		fmt.Println(err)
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Wrong old password"})
+	}
+
+	passwordWithHash, err := security.HashPassword(passwordUpdate.NewPassword)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+
+	err = repository.UpdatePassword(ID, string(passwordWithHash))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }
