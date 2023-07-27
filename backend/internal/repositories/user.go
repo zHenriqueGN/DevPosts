@@ -258,3 +258,19 @@ func (repository Users) FetchPassword(userID int) (dbUserPassword string, err er
 
 	return
 }
+
+// UpdatePassword updates the user's password
+func (repository Users) UpdatePassword(userID int, newPassword string) (err error) {
+	stmt, err := repository.db.Prepare("UPDATE users SET password=$1 WHERE id=$2")
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(newPassword, userID)
+	if err != nil {
+		return
+	}
+
+	return
+}
