@@ -240,3 +240,21 @@ func (repository Users) GetFollowings(userID int) (followings []models.User, err
 
 	return
 }
+
+// FetchPassword get the user's password
+func (repository Users) FetchPassword(userID int) (dbUserPassword string, err error) {
+	row, err := repository.db.Query("SELECT password FROM users WHERE id=$1", userID)
+	if err != nil {
+		return
+	}
+	defer row.Close()
+
+	if row.Next() {
+		err = row.Scan(&dbUserPassword)
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
