@@ -62,4 +62,10 @@ var UserRoutes = []Route{
 		Func:         controller.GetFollowings,
 		AuthRequired: true,
 	},
+	{
+		URI:          "/:id/update_passoword",
+		Method:       fiber.MethodPost,
+		Func:         controller.UpdatePassword,
+		AuthRequired: true,
+	},
 }
