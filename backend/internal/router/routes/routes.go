@@ -40,5 +40,19 @@ func Config(app *fiber.App) *fiber.App {
 		}
 	}
 
+	posts := api.Group("/posts")
+	for _, route := range PostRoutes {
+		if route.AuthRequired {
+			posts.Add(route.Method, route.URI, jwtware.New(
+				jwtware.Config{
+					SigningKey:     jwtware.SigningKey{Key: []byte(config.SecretKey)},
+					SuccessHandler: route.Func,
+				},
+			))
+		} else {
+			posts.Add(route.Method, route.URI, route.Func)
+		}
+	}
+
 	return app
 }
