@@ -1,14 +1,15 @@
+DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS followers;
 DROP TABLE IF EXISTS users;
 
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    name varchar(50) not null,
-    userName varchar(50) not null unique,
-    email varchar(50) not null unique,
-    password varchar not null,
-    creationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    name VARCHAR(50) NOT NULL,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR NOT NULL,
+    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE followers (
@@ -16,6 +17,16 @@ CREATE TABLE followers (
     follower_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, follower_id)
 );
+
+CREATE TABLE posts (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(50) NOT NULL,
+    content VARCHAR(300) NOT NULL,
+    author_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    likes INT NOT NULL DEFAULT 0,
+    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 
 INSERT INTO users (
@@ -37,3 +48,4 @@ VALUES
     (1, 2),
     (3, 1),
     (1, 3);
+
