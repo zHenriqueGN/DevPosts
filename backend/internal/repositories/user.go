@@ -6,17 +6,17 @@ import (
 	"fmt"
 )
 
-// Users represents an users repositorie
+// Users represents an users repository
 type Users struct {
 	db *sql.DB
 }
 
-// NewUsersRepositorie a new repositorie of users
+// NewUsersRepository create a new repository of users
 func NewUsersRepository(db *sql.DB) *Users {
 	return &Users{db}
 }
 
-// Create insert a user in database
+// Create insert an user in database
 func (repository Users) Create(user models.User) (ID int, err error) {
 	stmt, err := repository.db.Prepare(
 		"INSERT INTO users (name, username, email, password) VALUES ($1, $2, $3, $4) RETURNING id",
