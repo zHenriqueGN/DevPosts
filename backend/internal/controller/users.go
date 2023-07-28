@@ -16,23 +16,23 @@ func CreateUser(c *fiber.Ctx) error {
 	var user models.User
 	err := c.BodyParser(&user)
 	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if err = user.Prepare("register"); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	ID, err := repository.Create(user)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	user.ID = ID
 
@@ -45,14 +45,14 @@ func FetchUsers(c *fiber.Ctx) error {
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	users, err := repository.FilterByUserName(userName)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(users)
@@ -62,19 +62,19 @@ func FetchUsers(c *fiber.Ctx) error {
 func FetchUser(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	user, err := repository.GetById(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if user.ID != ID {
@@ -88,14 +88,14 @@ func FetchUser(c *fiber.Ctx) error {
 func UpdateUser(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	authorization := c.GetReqHeaders()["Authorization"]
 
 	tokenUserID, err := auth.GetTokenUserID(authorization)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if ID != tokenUserID {
@@ -105,18 +105,18 @@ func UpdateUser(c *fiber.Ctx) error {
 	var user models.User
 	err = c.BodyParser(&user)
 	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	user.ID = ID
 
 	if err = user.Prepare("update"); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	defer db.Close()
 
@@ -124,7 +124,7 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	tempUser, err := repository.GetById(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if tempUser.ID != ID {
@@ -132,7 +132,7 @@ func UpdateUser(c *fiber.Ctx) error {
 	}
 
 	if err := repository.Update(user); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
@@ -142,14 +142,14 @@ func UpdateUser(c *fiber.Ctx) error {
 func DeleteUser(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	authorization := c.GetReqHeaders()["Authorization"]
 
 	tokenUserID, err := auth.GetTokenUserID(authorization)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if ID != tokenUserID {
@@ -158,14 +158,14 @@ func DeleteUser(c *fiber.Ctx) error {
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	tempUser, err := repository.GetById(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if tempUser.ID != ID {
@@ -174,7 +174,7 @@ func DeleteUser(c *fiber.Ctx) error {
 
 	err = repository.Delete(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
@@ -184,14 +184,14 @@ func DeleteUser(c *fiber.Ctx) error {
 func FollowUser(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	authorization := c.GetReqHeaders()["Authorization"]
 
 	tokenUserID, err := auth.GetTokenUserID(authorization)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if ID == tokenUserID {
@@ -200,14 +200,14 @@ func FollowUser(c *fiber.Ctx) error {
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	err = repository.Follow(ID, tokenUserID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
@@ -217,14 +217,14 @@ func FollowUser(c *fiber.Ctx) error {
 func UnfollowUser(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	authorization := c.GetReqHeaders()["Authorization"]
 
 	tokenUserID, err := auth.GetTokenUserID(authorization)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if ID == tokenUserID {
@@ -233,14 +233,14 @@ func UnfollowUser(c *fiber.Ctx) error {
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	err = repository.Unfollow(ID, tokenUserID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
@@ -250,19 +250,19 @@ func UnfollowUser(c *fiber.Ctx) error {
 func GetFollowers(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	followers, err := repository.GetFollowers(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if followers == nil {
@@ -276,19 +276,19 @@ func GetFollowers(c *fiber.Ctx) error {
 func GetFollowings(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	followings, err := repository.GetFollowings(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if followings == nil {
@@ -302,13 +302,13 @@ func GetFollowings(c *fiber.Ctx) error {
 func UpdatePassword(c *fiber.Ctx) error {
 	ID, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	authorization := c.GetReqHeaders()["Authorization"]
 	tokenUserID, err := auth.GetTokenUserID(authorization)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if ID != tokenUserID {
@@ -318,7 +318,7 @@ func UpdatePassword(c *fiber.Ctx) error {
 	var passwordUpdate models.PasswordUpdate
 	err = c.BodyParser(&passwordUpdate)
 	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if passwordUpdate.OldPassword == "" || passwordUpdate.NewPassword == "" {
@@ -327,14 +327,14 @@ func UpdatePassword(c *fiber.Ctx) error {
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	dbUserPassword, err := repository.FetchPassword(ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	err = security.ComparePasswordWithHash(dbUserPassword, passwordUpdate.OldPassword)
@@ -345,12 +345,12 @@ func UpdatePassword(c *fiber.Ctx) error {
 
 	passwordWithHash, err := security.HashPassword(passwordUpdate.NewPassword)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	err = repository.UpdatePassword(ID, string(passwordWithHash))
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
