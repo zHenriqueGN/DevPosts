@@ -32,19 +32,19 @@ func (user *User) Prepare(stage string) (err error) {
 
 func (user *User) validate(stage string) (err error) {
 	if user.Name == "" {
-		return errors.New("the field Name can't be empty")
+		return errors.New("the field name can't be empty")
 	}
 	if user.UserName == "" {
-		return errors.New("the field UserName can't be empty")
+		return errors.New("the field username can't be empty")
 	}
 	if user.Email == "" {
-		return errors.New("the field Email can't be empty")
+		return errors.New("the field email can't be empty")
 	}
 	if err := checkmail.ValidateFormat(user.Email); err != nil {
 		return errors.New("invalid e-mail")
 	}
 	if stage == "register" && user.Password == "" {
-		return errors.New("the field Password can't be empty")
+		return errors.New("the field password can't be empty")
 	}
 	return
 }
