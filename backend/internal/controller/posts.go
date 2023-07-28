@@ -1,12 +1,50 @@
 package controller
 
 import (
+	"api/internal/auth"
+	"api/internal/database"
+	"api/internal/models"
+	"api/internal/repositories"
+
 	"github.com/gofiber/fiber/v2"
 )
 
 // CreatePost create a user in database
 func CreatePost(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "method not implemented yet"})
+	authorization := c.GetReqHeaders()["Authorization"]
+	tokenUserID, err := auth.GetTokenUserID(authorization)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	var post models.Post
+	err = c.BodyParser(&post)
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	err = post.Prepare()
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	post.AuthorID = tokenUserID
+
+	db, err := database.ConnectToDB()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	defer db.Close()
+
+	repository := repositories.NewPostsRepository(db)
+	postID, err := repository.Create(post)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	post.ID = postID
+
+	return c.Status(fiber.StatusCreated).JSON(post)
 }
 
 // FetchPosts fetch all the posts in database
