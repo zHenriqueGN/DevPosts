@@ -19,7 +19,7 @@ func NewUsersRepository(db *sql.DB) *Users {
 // Create insert a user in database
 func (repository Users) Create(user models.User) (ID int, err error) {
 	stmt, err := repository.db.Prepare(
-		"INSERT INTO users (name, userName, email, password) VALUES ($1, $2, $3, $4) RETURNING id",
+		"INSERT INTO users (name, username, email, password) VALUES ($1, $2, $3, $4) RETURNING id",
 	)
 
 	if err != nil {
@@ -40,7 +40,7 @@ func (repository Users) FilterByUserName(userName string) (users []models.User, 
 	userName = fmt.Sprintf("%%%s%%", userName)
 
 	rows, err := repository.db.Query(
-		"SELECT id, name, userName, email FROM users WHERE userName LIKE $1;", userName,
+		"SELECT id, name, username, email FROM users WHERE username LIKE $1;", userName,
 	)
 	if err != nil {
 		return
@@ -66,7 +66,7 @@ func (repository Users) FilterByUserName(userName string) (users []models.User, 
 // GetById fetch an user by id
 func (repository Users) GetById(id int) (user models.User, err error) {
 	row, err := repository.db.Query(
-		"SELECT id, name, userName, email FROM users WHERE id=$1", id,
+		"SELECT id, name, username, email FROM users WHERE id=$1", id,
 	)
 	if err != nil {
 		return
@@ -91,7 +91,7 @@ func (repository Users) GetById(id int) (user models.User, err error) {
 // Update updates an user in database
 func (repository Users) Update(user models.User) (err error) {
 	stmt, err := repository.db.Prepare(
-		"UPDATE users SET name=$1, userName=$2, email=$3 WHERE id=$4",
+		"UPDATE users SET name=$1, username=$2, email=$3 WHERE id=$4",
 	)
 	if err != nil {
 		return
