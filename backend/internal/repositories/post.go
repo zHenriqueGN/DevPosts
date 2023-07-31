@@ -67,3 +67,19 @@ func (repository Posts) GetById(ID int) (post models.Post, err error) {
 
 	return
 }
+
+// Delete deletes a post in database
+func (repository Posts) Delete(ID int) (err error) {
+	stmt, err := repository.db.Prepare("DELETE FROM posts WHERE id=$1")
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(ID)
+	if err != nil {
+		return
+	}
+
+	return
+}
