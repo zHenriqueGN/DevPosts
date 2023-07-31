@@ -37,4 +37,10 @@ var PostRoutes = []Route{
 		Func:         controller.DeletePost,
 		AuthRequired: true,
 	},
+	{
+		URI:          "/user_posts/:id",
+		Method:       fiber.MethodGet,
+		Func:         controller.FetchPostsByUser,
+		AuthRequired: true,
+	},
 }
