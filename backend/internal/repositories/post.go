@@ -68,6 +68,24 @@ func (repository Posts) GetById(ID int) (post models.Post, err error) {
 	return
 }
 
+// Update updates a post in database
+func (repository Posts) Update(post models.Post) (err error) {
+	stmt, err := repository.db.Prepare(
+		`UPDATE posts SET title=$1, content=$2 WHERE id=$3`,
+	)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(post.Title, post.Content, post.ID)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
 // Delete deletes a post in database
 func (repository Posts) Delete(ID int) (err error) {
 	stmt, err := repository.db.Prepare("DELETE FROM posts WHERE id=$1")
