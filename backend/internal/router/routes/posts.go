@@ -49,4 +49,10 @@ var PostRoutes = []Route{
 		Func:         controller.LikePost,
 		AuthRequired: true,
 	},
+	{
+		URI:          "/:id/unlike",
+		Method:       fiber.MethodPost,
+		Func:         controller.UnlikePost,
+		AuthRequired: true,
+	},
 }
