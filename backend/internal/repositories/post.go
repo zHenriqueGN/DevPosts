@@ -180,3 +180,19 @@ func (repository Posts) GetByUserId(userID int) (posts []models.Post, err error)
 
 	return
 }
+
+// Like increments the like count of a post
+func (repository Posts) Like(ID int) (err error) {
+	stmt, err := repository.db.Prepare("UPDATE posts SET likes=likes+1 WHERE id=$1")
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(ID)
+	if err != nil {
+		return
+	}
+
+	return
+}

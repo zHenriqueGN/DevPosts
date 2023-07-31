@@ -210,3 +210,25 @@ func FetchPostsByUser(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(posts)
 }
+
+// LikePost allow an user to like a post
+func LikePost(c *fiber.Ctx) error {
+	ID, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	db, err := database.ConnectToDB()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	defer db.Close()
+
+	repository := repositories.NewPostsRepository(db)
+	err = repository.Like(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
+}
