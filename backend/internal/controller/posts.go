@@ -49,7 +49,26 @@ func CreatePost(c *fiber.Ctx) error {
 
 // FetchPosts fetch all the posts in database
 func FetchPosts(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"error": "method not implemented yet"})
+	authorization := c.GetReqHeaders()["Authorization"]
+
+	tokenUserID, err := auth.GetTokenUserID(authorization)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	db, err := database.ConnectToDB()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	defer db.Close()
+
+	repository := repositories.NewPostsRepository(db)
+	posts, err := repository.Fetch(tokenUserID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(posts)
 }
 
 // FetchPost fetch a post in database
