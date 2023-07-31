@@ -80,7 +80,52 @@ func FetchPost(c *fiber.Ctx) error {
 
 // UpdatePost update a post in database
 func UpdatePost(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"error": "method not implemented yet"})
+	ID, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	authorization := c.GetReqHeaders()["Authorization"]
+
+	tokenUserID, err := auth.GetTokenUserID(authorization)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	var post models.Post
+	err = c.BodyParser(&post)
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	post.ID = ID
+
+	db, err := database.ConnectToDB()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	defer db.Close()
+
+	repository := repositories.NewPostsRepository(db)
+	tempPost, err := repository.GetById(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if tempPost.ID != ID {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	if tempPost.AuthorID != tokenUserID {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "You can't update someone else's post"})
+	}
+
+	err = repository.Update(post)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }
 
 // DeletePost delete a post from database
