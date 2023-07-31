@@ -141,3 +141,42 @@ func (repository Posts) Delete(ID int) (err error) {
 
 	return
 }
+
+// GetByUserId get all the posts by an user ID
+func (repository Posts) GetByUserId(userID int) (posts []models.Post, err error) {
+	rows, err := repository.db.Query(
+		`SELECT P.id, 
+				P.title, 
+				P.content, 
+				P.author_id,
+				U.username, 
+				P.likes, 
+				P.creation_date
+		FROM posts P INNER JOIN users U
+		ON P.author_id = U.id
+		WHERE P.author_id = $1
+		ORDER BY P.id DESC`, userID,
+	)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var post models.Post
+		if err = rows.Scan(
+			&post.ID,
+			&post.Title,
+			&post.Content,
+			&post.AuthorID,
+			&post.AuthorUserName,
+			&post.Likes,
+			&post.CreationDate,
+		); err != nil {
+			return
+		}
+		posts = append(posts, post)
+	}
+
+	return
+}
