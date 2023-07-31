@@ -43,4 +43,10 @@ var PostRoutes = []Route{
 		Func:         controller.FetchPostsByUser,
 		AuthRequired: true,
 	},
+	{
+		URI:          "/:id/like",
+		Method:       fiber.MethodPost,
+		Func:         controller.LikePost,
+		AuthRequired: true,
+	},
 }
