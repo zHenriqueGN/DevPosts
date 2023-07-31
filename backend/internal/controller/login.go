@@ -15,12 +15,12 @@ func Login(c *fiber.Ctx) error {
 	var user models.User
 	err := c.BodyParser(&user)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	db, err := database.ConnectToDB()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	defer db.Close()
 
@@ -28,7 +28,7 @@ func Login(c *fiber.Ctx) error {
 
 	tempUser, err := repository.SearchByEmail(user.Email)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if err := security.ComparePasswordWithHash(tempUser.Password, user.Password); err != nil {
@@ -37,7 +37,7 @@ func Login(c *fiber.Ctx) error {
 
 	token, err := auth.GenerateToken(tempUser.ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.Status(fiber.StatusOK).SendString(token)
