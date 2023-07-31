@@ -49,20 +49,20 @@ func CreatePost(c *fiber.Ctx) error {
 
 // FetchPosts fetch all the posts in database
 func FetchPosts(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "method not implemented yet"})
+	return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"error": "method not implemented yet"})
 }
 
 // FetchPost fetch a post in database
 func FetchPost(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "method not implemented yet"})
+	return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"error": "method not implemented yet"})
 }
 
 // UpdatePost update a post in database
 func UpdatePost(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "method not implemented yet"})
+	return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"error": "method not implemented yet"})
 }
 
 // DeletePost delete a post from database
 func DeletePost(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "method not implemented yet"})
+	return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"error": "method not implemented yet"})
 }
