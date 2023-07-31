@@ -196,3 +196,25 @@ func (repository Posts) Like(ID int) (err error) {
 
 	return
 }
+
+// Unlike decrements the like count of a post
+func (repository Posts) Unlike(ID int) (err error) {
+	stmt, err := repository.db.Prepare(
+		`UPDATE posts SET likes =
+		CASE
+			WHEN likes > 0 THEN likes-1
+			ELSE 0
+		END
+		WHERE id=$1`)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(ID)
+	if err != nil {
+		return
+	}
+
+	return
+}
