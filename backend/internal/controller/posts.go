@@ -49,20 +49,41 @@ func CreatePost(c *fiber.Ctx) error {
 
 // FetchPosts fetch all the posts in database
 func FetchPosts(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "method not implemented yet"})
+	return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"error": "method not implemented yet"})
 }
 
 // FetchPost fetch a post in database
 func FetchPost(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "method not implemented yet"})
+	ID, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	db, err := database.ConnectToDB()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	defer db.Close()
+
+	repository := repositories.NewPostsRepository(db)
+	post, err := repository.GetById(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if post.ID != ID {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(post)
 }
 
 // UpdatePost update a post in database
 func UpdatePost(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "method not implemented yet"})
+	return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"error": "method not implemented yet"})
 }
 
 // DeletePost delete a post from database
 func DeletePost(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "method not implemented yet"})
+	return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"error": "method not implemented yet"})
 }
