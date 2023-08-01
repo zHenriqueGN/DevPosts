@@ -137,9 +137,9 @@ paths:
         '200':
           description: Ok - User returned successfully.
         '400':
-          description: Bad request - Invalid userId.
+          description: Bad request - Invalid id.
         '404':
-          description: Not found - Any user match the provided userId.
+          description: Not found - Any user match the provided id.
         '500':
           description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
     put:
@@ -182,9 +182,36 @@ paths:
         '403':
           description: Forbidden - You've tried to update someone else's user.
         '404':
-          description: Not found - Any user match the provided userId.               
+          description: Not found - Any user match the provided id.               
         '422':
           description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
         '500':
           description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                
-              
+    delete:
+      summary: Delete user
+      description: Endpoint to delete an user
+      tags:
+        - users
+      security:
+        - Bearer: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+      responses:
+        '204':
+          description: No content - User deleted successfully.
+        '400':
+          description: Bad request - Invalid id.
+        '403':
+          description: Forbidden - You've tried to update someone else's user.
+        '404':
+          description: Not found - Any user match the provided id.               
+        '500':
+          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                        
+      
