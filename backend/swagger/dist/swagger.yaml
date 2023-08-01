@@ -59,10 +59,10 @@ paths:
     get:
       summary: Get users
       description: Endpoint to get users
-      security:
-        - Bearer: []
       tags:
         - users
+      security:
+        - Bearer: []
       consumes:
         - application/json
       produces:
@@ -122,13 +122,15 @@ paths:
       description: Endpoint to get an user
       tags:
         - users
+      security:
+        - Bearer: []
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
         - in: path
-          name: userId
+          name: id
           type: integer
           required: true
       responses:
@@ -140,4 +142,49 @@ paths:
           description: Not found - Any user match the provided userId.
         '500':
           description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
-        
+    put:
+      summary: Update user
+      description: Endpoint to update an user
+      tags:
+        - users
+      security:
+        - Bearer: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+        - in: body
+          name: user
+          description: User object to be updated
+          required: true
+          schema:
+            type: object
+            properties: 
+              name:
+                type: string
+                example: John Garfield
+              userName:
+                type: string
+                example: john.garfield
+              email:
+                type: string
+                example: john.garfield@gmail.com
+      responses:
+        '204':
+          description: No content - User updated successfully.
+        '400':
+          description: Bad request - Invalid user data.
+        '403':
+          description: Forbidden - You've tried to update someone else's user.
+        '404':
+          description: Not found - Any user match the provided userId.               
+        '422':
+          description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
+        '500':
+          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                
+              
