@@ -13,6 +13,7 @@ tags:
     description: Endpoints related to authentication
   - name: users
     description: Endpoints related to users
+  - name: social media
 securityDefinitions:
   Bearer:
     type: apiKey
@@ -82,7 +83,6 @@ paths:
       description: Endpoint to create a new user
       tags:
         - auth
-        - users
       consumes:
         - application/json
       produces:
@@ -214,4 +214,32 @@ paths:
           description: Not found - Any user match the provided id.               
         '500':
           description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                        
-      
+  /users/{id}/follow:
+    post:
+      summary: Follow user
+      description: Endpoint to follow an user
+      tags:
+        - social media
+      security:
+        - Bearer: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: User id to be followed
+          type: integer
+          required: true
+      responses:
+        '204':
+          description: No content - User followed successfully.
+        '400':
+          description: Bad request - Invalid user id.
+        '403':
+          description: Forbidden - You've tried to follow yourself.
+        '404':
+          description: Not found - Any user match the provided id.           
+        '500':
+          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                
