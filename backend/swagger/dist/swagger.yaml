@@ -9,14 +9,58 @@ basePath: /api/v1
 schemes:
   - "http"
 tags:
+  - name: auth
+    description: Endpoints related to authentication
   - name: users
     description: Endpoints related to users
-    
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: >-
+      Enter the token with the "Bearer " prefix, e.g. "Bearer abcde12345".
+
 paths:
+  /auth/login:
+    post:
+      summary: login route
+      description: Endpoint to login
+      tags:
+        - auth
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User object to be logged in
+          required: true
+          schema:
+            type: object
+            properties: 
+              email:
+                type: string
+                example: john.garfield@gmail.com
+              password:
+                type: string
+                example: 12345
+      responses:
+        '200':
+          description: Ok - User successfully logged in.
+        '401':
+          description: Unauthorized - Wrong email or password
+        '422':
+          description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
+        '500':
+          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
   /users:
     get:
       summary: Get users
       description: Endpoint to get users
+      security:
+        - Bearer: []
       tags:
         - users
       consumes:
@@ -37,6 +81,7 @@ paths:
       summary: Create a new user
       description: Endpoint to create a new user
       tags:
+        - auth
         - users
       consumes:
         - application/json
