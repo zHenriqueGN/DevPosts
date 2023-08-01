@@ -248,6 +248,16 @@ func UnfollowUser(c *fiber.Ctx) error {
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
+
+	tempUser, err := repository.GetById(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if tempUser.ID != ID {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
 	err = repository.Unfollow(ID, tokenUserID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
