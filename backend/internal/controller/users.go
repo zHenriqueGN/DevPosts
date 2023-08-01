@@ -312,13 +312,19 @@ func GetFollowings(c *fiber.Ctx) error {
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
-	followings, err := repository.GetFollowings(ID)
+
+	tempUser, err := repository.GetById(ID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	if followings == nil {
+	if tempUser.ID != ID {
 		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	followings, err := repository.GetFollowings(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(followings)
