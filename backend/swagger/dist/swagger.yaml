@@ -14,9 +14,34 @@ tags:
     
 paths:
   /users:
+    get:
+      summary: Get users
+      description: Endpoint to get users
+      tags:
+        - users
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: username
+          description: Username to be filtered
+          type: string
+      responses:
+        '201':
+          description: User created successfully.
+        '400':
+          description: Bad request - Invalid user data.
+        '401':
+          description: Bad request - You must be logged in to access this route.
+        '422':
+          description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
+        '500':
+          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
     post:
       summary: Create a new user
-      description: Endpoint to create a new user.
+      description: Endpoint to create a new user
       tags:
         - users
       consumes:
@@ -52,3 +77,4 @@ paths:
           description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
         '500':
           description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
+  
