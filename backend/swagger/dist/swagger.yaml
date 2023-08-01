@@ -29,14 +29,8 @@ paths:
           description: Username to be filtered
           type: string
       responses:
-        '201':
-          description: User created successfully.
-        '400':
-          description: Bad request - Invalid user data.
-        '401':
-          description: Bad request - You must be logged in to access this route.
-        '422':
-          description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
+        '200':
+          description: Ok - Users returned successfully.
         '500':
           description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
     post:
@@ -70,11 +64,35 @@ paths:
                 example: 12345
       responses:
         '201':
-          description: User created successfully.
+          description: Created - User created successfully.
         '400':
           description: Bad request - Invalid user data.
         '422':
           description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
         '500':
           description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
-  
+  /users/{id}:
+    get:
+      summary: Get user
+      description: Endpoint to get an user
+      tags:
+        - users
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: userId
+          type: integer
+          required: true
+      responses:
+        '200':
+          description: Ok - User returned successfully.
+        '400':
+          description: Bad request - Invalid userId.
+        '404':
+          description: Not found - Any user match the provided userId.
+        '500':
+          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
+        
