@@ -327,3 +327,49 @@ paths:
           description: Not found - Any user match the provided id.           
         '500':
           description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                
+  /users/{id}/update_password:
+    post:
+      summary: Update password
+      description: Endpoint to update the password of an giver user
+      tags:
+        - auth
+      security:
+        - Bearer: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: User id to update password
+          type: integer
+          required: true
+        - in: body
+          name: password
+          description: Password object to update the password
+          required: true
+          schema:
+            type: object
+            properties:
+              oldPassword:
+                type: string
+                example: 12345
+              newPassword:
+                type: string
+                example: 54321
+      responses:
+        '200':
+          description: No content - Password updated successfully.
+        '400':
+          description: Bad request - You've passed an empty passoword.
+        '401':
+          description: Unauthorized - Wrong old password
+        '403':
+          description: Forbidden - You've tried to update someone else's password.
+        '404':
+          description: Not found - Any user match the provided id.           
+        '422':
+          description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
+        '500':
+          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                
