@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   title: Dev Posts
-  description: A social media API for minimalistic devs 
+  description: A social media API for minimalistic devs
   version: 1.0.0
 
 host: localhost:8000
@@ -19,10 +19,36 @@ paths:
       description: Endpoint to create a new user.
       tags:
         - users
-
+      consumes:
+        - application/json
+      produces:
+        - application/json        
+      parameters:
+        - in: body
+          name: user
+          description: User object to be created
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: John Garfield
+              userName:
+                type: string
+                example: john.garfield
+              email:
+                type: string
+                example: john.garfield@gmail.com
+              password:
+                type: string
+                example: 12345
       responses:
         '201':
           description: User created successfully.
-
         '400':
           description: Bad request - Invalid user data.
+        '422':
+          description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
+        '500':
+          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
