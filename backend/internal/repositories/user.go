@@ -181,7 +181,7 @@ func (repository Users) Unfollow(userID, followerID int) (err error) {
 func (repository Users) GetFollowers(userID int) (followers []models.User, err error) {
 	rows, err := repository.db.Query(
 		`
-		SELECT U.id, U.name, U.username, U.email, U.creationdate
+		SELECT U.id, U.name, U.username, U.email, U.creation_date
 		FROM users U INNER JOIN followers F
 		ON U.id = F.follower_id
 		WHERE F.user_id = $1
