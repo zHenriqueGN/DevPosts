@@ -5,9 +5,9 @@ INSERT INTO users (
     password
 )
 VALUES
-    ('John Garfield', 'john.garfield', 'john.garfield@gmail.com', '$2a$10$xTKKshFe9EN9Fbp4O7ILp.RVdZDfaDcc9SL6dDK4QOtfUTcnSl0oW'),
-    ('Ali Rus', 'ali.rus', 'ali.rus@gmail.com', '$2a$10$xTKKshFe9EN9Fbp4O7ILp.RVdZDfaDcc9SL6dDK4QOtfUTcnSl0oW'),
-    ('Hellen Barch', 'hellen.barch', 'hellen.barch@gmail.com', '$2a$10$xTKKshFe9EN9Fbp4O7ILp.RVdZDfaDcc9SL6dDK4QOtfUTcnSl0oW');
+    ('John Garfield', 'john.garfield', 'john.garfield@gmail.com', '$2a$10$8suR6nlsrUaumIJ.8qHi0OJwT6l5MQmACeZHcwg6I.DXE88/DFSie'),
+    ('Ali Rus', 'ali.rus', 'ali.rus@gmail.com', '$2a$10$8suR6nlsrUaumIJ.8qHi0OJwT6l5MQmACeZHcwg6I.DXE88/DFSie'),
+    ('Hellen Barch', 'hellen.barch', 'hellen.barch@gmail.com', '$2a$10$8suR6nlsrUaumIJ.8qHi0OJwT6l5MQmACeZHcwg6I.DXE88/DFSie');
     
 
 INSERT INTO followers (

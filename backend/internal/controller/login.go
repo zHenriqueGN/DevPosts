@@ -15,7 +15,7 @@ func Login(c *fiber.Ctx) error {
 	var user models.User
 	err := c.BodyParser(&user)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	db, err := database.ConnectToDB()

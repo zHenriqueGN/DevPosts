@@ -205,6 +205,16 @@ func FollowUser(c *fiber.Ctx) error {
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
+
+	tempUser, err := repository.GetById(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if tempUser.ID != ID {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
 	err = repository.Follow(ID, tokenUserID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -238,6 +248,16 @@ func UnfollowUser(c *fiber.Ctx) error {
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
+
+	tempUser, err := repository.GetById(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if tempUser.ID != ID {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
 	err = repository.Unfollow(ID, tokenUserID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -260,13 +280,19 @@ func GetFollowers(c *fiber.Ctx) error {
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
-	followers, err := repository.GetFollowers(ID)
+
+	tempUser, err := repository.GetById(ID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	if followers == nil {
+	if tempUser.ID != ID {
 		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	followers, err := repository.GetFollowers(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(followers)
@@ -286,13 +312,19 @@ func GetFollowings(c *fiber.Ctx) error {
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
-	followings, err := repository.GetFollowings(ID)
+
+	tempUser, err := repository.GetById(ID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	if followings == nil {
+	if tempUser.ID != ID {
 		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	followings, err := repository.GetFollowings(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(followings)
@@ -332,6 +364,16 @@ func UpdatePassword(c *fiber.Ctx) error {
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
+
+	tempUser, err := repository.GetById(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if tempUser.ID != ID {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
 	dbUserPassword, err := repository.FetchPassword(ID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
