@@ -213,7 +213,7 @@ func (repository Users) GetFollowers(userID int) (followers []models.User, err e
 func (repository Users) GetFollowings(userID int) (followings []models.User, err error) {
 	rows, err := repository.db.Query(
 		`
-		SELECT U.id, U.name, U.username, U.email, U.creationdate
+		SELECT U.id, U.name, U.username, U.email, U.creation_date
 		FROM users U INNER JOIN followers F
 		ON U.id = F.user_id
 		WHERE F.follower_id = $1
