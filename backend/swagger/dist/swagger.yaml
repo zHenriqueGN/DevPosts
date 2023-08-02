@@ -1,375 +1,407 @@
-swagger: "2.0"
+openapi: 3.0.1
 info:
   title: Dev Posts
   description: A social media API for minimalistic devs
   version: 1.0.0
-
-host: localhost:8000
-basePath: /api/v1
-schemes:
-  - "http"
+servers:
+- url: http://localhost:8000/api/v1
 tags:
-  - name: auth
-    description: Endpoints related to authentication
-  - name: users
-    description: Endpoints related to users
-  - name: social media
-    description: Endpoint related to the social media
-securityDefinitions:
-  Bearer:
-    type: apiKey
-    name: Authorization
-    in: header
-    description: >-
-      Enter the token with the "Bearer " prefix, e.g. "Bearer abcde12345".
-
+- name: auth
+  description: Endpoints related to authentication
+- name: users
+  description: Endpoints related to users
+- name: social media
+  description: Endpoint related to the social media
 paths:
   /auth/login:
     post:
+      tags:
+      - auth
       summary: login route
       description: Endpoint to login
-      tags:
-        - auth
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: User object to be logged in
-          required: true
-          schema:
-            type: object
-            properties: 
-              email:
-                type: string
-                example: john.garfield@gmail.com
-              password:
-                type: string
-                example: 12345
+      requestBody:
+        description: User object to be logged in
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: john.garfield@gmail.com
+                password:
+                  type: string
+                  example: "12345"
+        required: true
       responses:
-        '200':
+        200:
           description: Ok - User successfully logged in.
-        '401':
+          content: {}
+        401:
           description: Unauthorized - Wrong email or password
-        '422':
-          description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
-        '500':
-          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
+          content: {}
+        422:
+          description: Unprocessable Entity - The request contains valid data, but
+            it cannot be processed due to validation or business logic errors.
+          content: {}
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+          content: {}
+      x-codegen-request-body-name: body
   /users:
     get:
+      tags:
+      - users
       summary: Get users
       description: Endpoint to get users
-      tags:
-        - users
-      security:
-        - Bearer: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: query
-          name: username
-          description: Username to be filtered
+      - name: username
+        in: query
+        description: Username to be filtered
+        schema:
           type: string
       responses:
-        '200':
+        200:
           description: Ok - Users returned successfully.
-        '500':
-          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
+          content: {}
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+          content: {}
+      security:
+      - Bearer: []
     post:
+      tags:
+      - auth
       summary: Create a new user
       description: Endpoint to create a new user
-      tags:
-        - auth
-      consumes:
-        - application/json
-      produces:
-        - application/json        
-      parameters:
-        - in: body
-          name: user
-          description: User object to be created
-          required: true
-          schema:
-            type: object
-            properties:
-              name:
-                type: string
-                example: John Garfield
-              userName:
-                type: string
-                example: john.garfield
-              email:
-                type: string
-                example: john.garfield@gmail.com
-              password:
-                type: string
-                example: 12345
+      requestBody:
+        description: User object to be created
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Garfield
+                userName:
+                  type: string
+                  example: john.garfield
+                email:
+                  type: string
+                  example: john.garfield@gmail.com
+                password:
+                  type: string
+                  example: "12345"
+        required: true
       responses:
-        '201':
+        201:
           description: Created - User created successfully.
-        '400':
+          content: {}
+        400:
           description: Bad request - Invalid user data.
-        '422':
-          description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
-        '500':
-          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
+          content: {}
+        422:
+          description: Unprocessable Entity - The request contains valid data, but
+            it cannot be processed due to validation or business logic errors.
+          content: {}
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+          content: {}
+      x-codegen-request-body-name: user
   /users/{id}:
     get:
+      tags:
+      - users
       summary: Get user
       description: Endpoint to get an user
-      tags:
-        - users
-      security:
-        - Bearer: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: id
+      - name: id
+        in: path
+        required: true
+        schema:
           type: integer
-          required: true
       responses:
-        '200':
+        200:
           description: Ok - User returned successfully.
-        '400':
+          content: {}
+        400:
           description: Bad request - Invalid id.
-        '404':
+          content: {}
+        404:
           description: Not found - Any user match the provided id.
-        '500':
-          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.
+          content: {}
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+          content: {}
+      security:
+      - Bearer: []
     put:
+      tags:
+      - users
       summary: Update user
       description: Endpoint to update an user
-      tags:
-        - users
-      security:
-        - Bearer: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: id
+      - name: id
+        in: path
+        required: true
+        schema:
           type: integer
-          required: true
-        - in: body
-          name: user
-          description: User object to be updated
-          required: true
-          schema:
-            type: object
-            properties: 
-              name:
-                type: string
-                example: John Garfield
-              userName:
-                type: string
-                example: john.garfield
-              email:
-                type: string
-                example: john.garfield@gmail.com
+      requestBody:
+        description: User object to be updated
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Garfield
+                userName:
+                  type: string
+                  example: john.garfield
+                email:
+                  type: string
+                  example: john.garfield@gmail.com
+        required: true
       responses:
-        '204':
+        204:
           description: No content - User updated successfully.
-        '400':
+          content: {}
+        400:
           description: Bad request - Invalid user data.
-        '403':
+          content: {}
+        403:
           description: Forbidden - You've tried to update someone else's user.
-        '404':
-          description: Not found - Any user match the provided id.               
-        '422':
-          description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
-        '500':
-          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                
+          content: {}
+        404:
+          description: Not found - Any user match the provided id.
+          content: {}
+        422:
+          description: Unprocessable Entity - The request contains valid data, but
+            it cannot be processed due to validation or business logic errors.
+          content: {}
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+          content: {}
+      security:
+      - Bearer: []
+      x-codegen-request-body-name: user
     delete:
+      tags:
+      - users
       summary: Delete user
       description: Endpoint to delete an user
-      tags:
-        - users
-      security:
-        - Bearer: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: id
+      - name: id
+        in: path
+        required: true
+        schema:
           type: integer
-          required: true
       responses:
-        '204':
+        204:
           description: No content - User deleted successfully.
-        '400':
+          content: {}
+        400:
           description: Bad request - Invalid id.
-        '403':
+          content: {}
+        403:
           description: Forbidden - You've tried to update someone else's user.
-        '404':
-          description: Not found - Any user match the provided id.               
-        '500':
-          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                        
+          content: {}
+        404:
+          description: Not found - Any user match the provided id.
+          content: {}
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+          content: {}
+      security:
+      - Bearer: []
   /users/{id}/follow:
     post:
+      tags:
+      - social media
       summary: Follow user
       description: Endpoint to follow an user
-      tags:
-        - social media
-      security:
-        - Bearer: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: id
-          description: User id to be followed
+      - name: id
+        in: path
+        description: User id to be followed
+        required: true
+        schema:
           type: integer
-          required: true
       responses:
-        '204':
+        204:
           description: No content - User followed successfully.
-        '400':
+          content: {}
+        400:
           description: Bad request - Invalid user id.
-        '403':
+          content: {}
+        403:
           description: Forbidden - You've tried to follow yourself.
-        '404':
-          description: Not found - Any user match the provided id.           
-        '500':
-          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                
+          content: {}
+        404:
+          description: Not found - Any user match the provided id.
+          content: {}
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+          content: {}
+      security:
+      - Bearer: []
   /users/{id}/unfollow:
     post:
+      tags:
+      - social media
       summary: Unfollow user
       description: Endpoint to unfollow an user
-      tags:
-        - social media
-      security:
-        - Bearer: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: id
-          description: User id to be unfollowed
+      - name: id
+        in: path
+        description: User id to be unfollowed
+        required: true
+        schema:
           type: integer
-          required: true
       responses:
-        '204':
+        204:
           description: No content - User unfollowed successfully.
-        '400':
+          content: {}
+        400:
           description: Bad request - Invalid user id.
-        '403':
+          content: {}
+        403:
           description: Forbidden - You've tried to unfollow yourself.
-        '404':
-          description: Not found - Any user match the provided id.           
-        '500':
-          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                
+          content: {}
+        404:
+          description: Not found - Any user match the provided id.
+          content: {}
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+          content: {}
+      security:
+      - Bearer: []
   /users/{id}/followers:
     get:
+      tags:
+      - social media
       summary: Get followers
       description: Endpoint to get followers of an giver user
-      tags:
-        - social media
-      security:
-        - Bearer: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: id
-          description: User id to get the followers
+      - name: id
+        in: path
+        description: User id to get the followers
+        required: true
+        schema:
           type: integer
-          required: true
       responses:
-        '200':
+        200:
           description: No content - Followers returned successfully.
-        '400':
+          content: {}
+        400:
           description: Bad request - Invalid user id.
-        '404':
-          description: Not found - Any user match the provided id.           
-        '500':
-          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                
+          content: {}
+        404:
+          description: Not found - Any user match the provided id.
+          content: {}
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+          content: {}
+      security:
+      - Bearer: []
   /users/{id}/followings:
     get:
+      tags:
+      - social media
       summary: Get followings
       description: Endpoint to get followings of an giver user
-      tags:
-        - social media
-      security:
-        - Bearer: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: id
-          description: User id to get the followings
+      - name: id
+        in: path
+        description: User id to get the followings
+        required: true
+        schema:
           type: integer
-          required: true
       responses:
-        '200':
+        200:
           description: No content - Followings returned successfully.
-        '400':
+          content: {}
+        400:
           description: Bad request - Invalid user id.
-        '404':
-          description: Not found - Any user match the provided id.           
-        '500':
-          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                
+          content: {}
+        404:
+          description: Not found - Any user match the provided id.
+          content: {}
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+          content: {}
+      security:
+      - Bearer: []
   /users/{id}/update_password:
     post:
+      tags:
+      - auth
       summary: Update password
       description: Endpoint to update the password of an giver user
-      tags:
-        - auth
-      security:
-        - Bearer: []
-      consumes:
-        - application/json
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: id
-          description: User id to update password
+      - name: id
+        in: path
+        description: User id to update password
+        required: true
+        schema:
           type: integer
-          required: true
-        - in: body
-          name: password
-          description: Password object to update the password
-          required: true
-          schema:
-            type: object
-            properties:
-              oldPassword:
-                type: string
-                example: 12345
-              newPassword:
-                type: string
-                example: 54321
+      requestBody:
+        description: Password object to update the password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                  example: "12345"
+                newPassword:
+                  type: string
+                  example: "54321"
+        required: true
       responses:
-        '200':
+        200:
           description: No content - Password updated successfully.
-        '400':
+          content: {}
+        400:
           description: Bad request - You've passed an empty passoword.
-        '401':
+          content: {}
+        401:
           description: Unauthorized - Wrong old password
-        '403':
+          content: {}
+        403:
           description: Forbidden - You've tried to update someone else's password.
-        '404':
-          description: Not found - Any user match the provided id.           
-        '422':
-          description: Unprocessable Entity - The request contains valid data, but it cannot be processed due to validation or business logic errors.
-        '500':
-          description: Internal Server Error - The server encountered an unexpected condition that prevented it from fulfilling the request.                
+          content: {}
+        404:
+          description: Not found - Any user match the provided id.
+          content: {}
+        422:
+          description: Unprocessable Entity - The request contains valid data, but
+            it cannot be processed due to validation or business logic errors.
+          content: {}
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+          content: {}
+      security:
+      - Bearer: []
+      x-codegen-request-body-name: password
+components:
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      description: Enter the token with the "Bearer " prefix, e.g. "Bearer abcde12345".
+      name: Authorization
+      in: header
