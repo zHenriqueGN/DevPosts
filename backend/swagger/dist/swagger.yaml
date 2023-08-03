@@ -365,3 +365,35 @@ paths:
             condition that prevented it from fulfilling the request.
       security:
       - Bearer: []
+    post:
+      tags:
+      - social media
+      summary: Create a new post
+      description: Endpoint to create a new post
+      requestBody:
+        description: Post object to be created
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Golang Course
+                content:
+                  type: string
+                  example: The Complete Google Go Programming Course For Beginners This five-hour course dives into Google Go or Golang.
+        required: true
+      responses:
+        201:
+          description: Created - Post created successfully.
+        400:
+          description: Bad request - Invalid post data.
+        422:
+          description: Unprocessable Entity - The request contains valid data, but
+            it cannot be processed due to validation or business logic errors.
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+      security:
+        - Bearer: []
