@@ -517,4 +517,53 @@ paths:
             condition that prevented it from fulfilling the request.
       security:
       - Bearer: []
-    
+  /posts/{id}/like:
+    post:
+      tags:
+      - social media
+      summary: Like post
+      description: Endpoint to like a post
+      parameters:
+      - name: id
+        in: path
+        description: Post id to be liked
+        required: true
+        schema:
+          type: integer
+      responses:
+        204:
+          description: No content - Post liked successfully.
+        400:
+          description: Bad request - Invalid post data.
+        404:
+          description: Not found - Any post match the provided id.
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+      security:
+      - Bearer: []
+  /posts/{id}/unlike:
+    post:
+      tags:
+      - social media
+      summary: Unlike post
+      description: Endpoint to unlike a post
+      parameters:
+      - name: id
+        in: path
+        description: Post id to be unliked
+        required: true
+        schema:
+          type: integer
+      responses:
+        204:
+          description: No content - Post unliked successfully.
+        400:
+          description: Bad request - Invalid post data.
+        404:
+          description: Not found - Any post match the provided id.
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+      security:
+      - Bearer: []
