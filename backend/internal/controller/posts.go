@@ -202,8 +202,8 @@ func FetchPostsByUser(c *fiber.Ctx) error {
 	}
 	defer db.Close()
 
-	reposirtory := repositories.NewPostsRepository(db)
-	posts, err := reposirtory.GetByUserId(ID)
+	repository := repositories.NewPostsRepository(db)
+	posts, err := repository.GetByUserId(ID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
