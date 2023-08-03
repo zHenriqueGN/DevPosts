@@ -12,6 +12,13 @@ tags:
   description: Endpoints related to users
 - name: social media
   description: Endpoint related to the social media
+components:
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      description: Enter the token with the "Bearer " prefix, e.g. "Bearer abcde12345".
+      name: Authorization
+      in: header
 paths:
   /auth/login:
     post:
@@ -36,19 +43,14 @@ paths:
       responses:
         200:
           description: Ok - User successfully logged in.
-          content: {}
         401:
           description: Unauthorized - Wrong email or password
-          content: {}
         422:
           description: Unprocessable Entity - The request contains valid data, but
             it cannot be processed due to validation or business logic errors.
-          content: {}
         500:
           description: Internal Server Error - The server encountered an unexpected
             condition that prevented it from fulfilling the request.
-          content: {}
-      x-codegen-request-body-name: body
   /users:
     get:
       tags:
@@ -64,11 +66,9 @@ paths:
       responses:
         200:
           description: Ok - Users returned successfully.
-          content: {}
         500:
           description: Internal Server Error - The server encountered an unexpected
             condition that prevented it from fulfilling the request.
-          content: {}
       security:
       - Bearer: []
     post:
@@ -99,19 +99,14 @@ paths:
       responses:
         201:
           description: Created - User created successfully.
-          content: {}
         400:
           description: Bad request - Invalid user data.
-          content: {}
         422:
           description: Unprocessable Entity - The request contains valid data, but
             it cannot be processed due to validation or business logic errors.
-          content: {}
         500:
           description: Internal Server Error - The server encountered an unexpected
             condition that prevented it from fulfilling the request.
-          content: {}
-      x-codegen-request-body-name: user
   /users/{id}:
     get:
       tags:
@@ -127,17 +122,13 @@ paths:
       responses:
         200:
           description: Ok - User returned successfully.
-          content: {}
         400:
           description: Bad request - Invalid id.
-          content: {}
         404:
           description: Not found - Any user match the provided id.
-          content: {}
         500:
           description: Internal Server Error - The server encountered an unexpected
             condition that prevented it from fulfilling the request.
-          content: {}
       security:
       - Bearer: []
     put:
@@ -171,27 +162,20 @@ paths:
       responses:
         204:
           description: No content - User updated successfully.
-          content: {}
         400:
           description: Bad request - Invalid user data.
-          content: {}
         403:
           description: Forbidden - You've tried to update someone else's user.
-          content: {}
         404:
           description: Not found - Any user match the provided id.
-          content: {}
         422:
           description: Unprocessable Entity - The request contains valid data, but
             it cannot be processed due to validation or business logic errors.
-          content: {}
         500:
           description: Internal Server Error - The server encountered an unexpected
             condition that prevented it from fulfilling the request.
-          content: {}
       security:
       - Bearer: []
-      x-codegen-request-body-name: user
     delete:
       tags:
       - users
@@ -206,20 +190,15 @@ paths:
       responses:
         204:
           description: No content - User deleted successfully.
-          content: {}
         400:
           description: Bad request - Invalid id.
-          content: {}
         403:
           description: Forbidden - You've tried to update someone else's user.
-          content: {}
         404:
           description: Not found - Any user match the provided id.
-          content: {}
         500:
           description: Internal Server Error - The server encountered an unexpected
             condition that prevented it from fulfilling the request.
-          content: {}
       security:
       - Bearer: []
   /users/{id}/follow:
@@ -238,20 +217,15 @@ paths:
       responses:
         204:
           description: No content - User followed successfully.
-          content: {}
         400:
           description: Bad request - Invalid user id.
-          content: {}
         403:
           description: Forbidden - You've tried to follow yourself.
-          content: {}
         404:
           description: Not found - Any user match the provided id.
-          content: {}
         500:
           description: Internal Server Error - The server encountered an unexpected
             condition that prevented it from fulfilling the request.
-          content: {}
       security:
       - Bearer: []
   /users/{id}/unfollow:
@@ -270,20 +244,15 @@ paths:
       responses:
         204:
           description: No content - User unfollowed successfully.
-          content: {}
         400:
           description: Bad request - Invalid user id.
-          content: {}
         403:
           description: Forbidden - You've tried to unfollow yourself.
-          content: {}
         404:
           description: Not found - Any user match the provided id.
-          content: {}
         500:
           description: Internal Server Error - The server encountered an unexpected
             condition that prevented it from fulfilling the request.
-          content: {}
       security:
       - Bearer: []
   /users/{id}/followers:
@@ -302,17 +271,13 @@ paths:
       responses:
         200:
           description: No content - Followers returned successfully.
-          content: {}
         400:
           description: Bad request - Invalid user id.
-          content: {}
         404:
           description: Not found - Any user match the provided id.
-          content: {}
         500:
           description: Internal Server Error - The server encountered an unexpected
             condition that prevented it from fulfilling the request.
-          content: {}
       security:
       - Bearer: []
   /users/{id}/followings:
@@ -331,17 +296,13 @@ paths:
       responses:
         200:
           description: No content - Followings returned successfully.
-          content: {}
         400:
           description: Bad request - Invalid user id.
-          content: {}
         404:
           description: Not found - Any user match the provided id.
-          content: {}
         500:
           description: Internal Server Error - The server encountered an unexpected
             condition that prevented it from fulfilling the request.
-          content: {}
       security:
       - Bearer: []
   /users/{id}/update_password:
@@ -374,34 +335,19 @@ paths:
       responses:
         200:
           description: No content - Password updated successfully.
-          content: {}
         400:
           description: Bad request - You've passed an empty passoword.
-          content: {}
         401:
           description: Unauthorized - Wrong old password
-          content: {}
         403:
           description: Forbidden - You've tried to update someone else's password.
-          content: {}
         404:
           description: Not found - Any user match the provided id.
-          content: {}
         422:
           description: Unprocessable Entity - The request contains valid data, but
             it cannot be processed due to validation or business logic errors.
-          content: {}
         500:
           description: Internal Server Error - The server encountered an unexpected
             condition that prevented it from fulfilling the request.
-          content: {}
       security:
       - Bearer: []
-      x-codegen-request-body-name: password
-components:
-  securitySchemes:
-    Bearer:
-      type: apiKey
-      description: Enter the token with the "Bearer " prefix, e.g. "Bearer abcde12345".
-      name: Authorization
-      in: header
