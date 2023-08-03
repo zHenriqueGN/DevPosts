@@ -116,6 +116,7 @@ paths:
       parameters:
       - name: id
         in: path
+        description: User id
         required: true
         schema:
           type: integer
@@ -139,6 +140,7 @@ paths:
       parameters:
       - name: id
         in: path
+        description: User id to be updated
         required: true
         schema:
           type: integer
@@ -184,6 +186,7 @@ paths:
       parameters:
       - name: id
         in: path
+        description: User id to be deleted
         required: true
         schema:
           type: integer
@@ -193,7 +196,7 @@ paths:
         400:
           description: Bad request - Invalid id.
         403:
-          description: Forbidden - You've tried to update someone else's user.
+          description: Forbidden - You've tried to delete someone else's user.
         404:
           description: Not found - Any user match the provided id.
         500:
@@ -397,3 +400,28 @@ paths:
             condition that prevented it from fulfilling the request.
       security:
         - Bearer: []
+  /posts/{id}:
+    get:
+      tags:
+      - social media
+      summary: Get post
+      description: Endpoint to get a post
+      parameters:
+      - name: id
+        in: path
+        description: Post id
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Ok - Post returned successfully.
+        400:
+          description: Bad request - Invalid id.
+        404:
+          description: Not found - Any post match the provided id.
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+      security:
+      - Bearer: []
