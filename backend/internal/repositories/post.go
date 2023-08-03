@@ -40,7 +40,7 @@ func (repository Posts) Fetch(userID int) (posts []models.Post, err error) {
 		INNER JOIN users U
 				ON
 			P.author_id = U.id
-		INNER JOIN followers f 
+		LEFT JOIN followers f 
 				ON
 			P.author_id = F.user_id
 		WHERE U.id = $1 OR F.follower_id = $2
