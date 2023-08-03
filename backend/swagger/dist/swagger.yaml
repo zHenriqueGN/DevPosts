@@ -425,3 +425,46 @@ paths:
             condition that prevented it from fulfilling the request.
       security:
       - Bearer: []
+    put:
+      tags:
+      - social media
+      summary: Update post
+      description: Endpoint to update a post
+      parameters:
+      - name: id
+        in: path
+        description: Post id to be updated
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: Post object to be updated
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Golang Course
+                content:
+                  type: string
+                  example: The Complete Google Go Programming Course For Beginners This five-hour course dives into Google Go or Golang.
+        required: true
+      responses:
+        204:
+          description: No content - Post updated successfully.
+        400:
+          description: Bad request - Invalid post data.
+        403:
+          description: Forbidden - You've tried to update someone else's post.
+        404:
+          description: Not found - Any post match the provided id.
+        422:
+          description: Unprocessable Entity - The request contains valid data, but
+            it cannot be processed due to validation or business logic errors.
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+      security:
+      - Bearer: []
