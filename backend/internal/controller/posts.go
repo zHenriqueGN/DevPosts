@@ -225,6 +225,16 @@ func LikePost(c *fiber.Ctx) error {
 	defer db.Close()
 
 	repository := repositories.NewPostsRepository(db)
+
+	tempPost, err := repository.GetById(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if tempPost.ID != ID {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
 	err = repository.Like(ID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -247,6 +257,16 @@ func UnlikePost(c *fiber.Ctx) error {
 	defer db.Close()
 
 	repository := repositories.NewPostsRepository(db)
+
+	tempPost, err := repository.GetById(ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if tempPost.ID != ID {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
 	err = repository.Unlike(ID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
