@@ -351,3 +351,17 @@ paths:
             condition that prevented it from fulfilling the request.
       security:
       - Bearer: []
+  /posts:
+    get:
+      tags:
+      - social media
+      summary: Get posts
+      description: Endpoint to get user and user's followers posts
+      responses:
+        200:
+          description: Ok - Posts returned successfully.
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+      security:
+      - Bearer: []
