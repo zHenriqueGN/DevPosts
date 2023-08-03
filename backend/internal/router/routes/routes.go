@@ -5,6 +5,7 @@ import (
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 // Representes all the API routes
@@ -17,7 +18,11 @@ type Route struct {
 
 // Config register all the routes in the router and applies the middlewares
 func Config(app *fiber.App) *fiber.App {
+	app.Use(logger.New())
+
 	api := app.Group("/api/v1")
+
+	api.Static("/docs", "./swagger/dist")
 
 	auth := api.Group("/auth")
 	auth.Add(LoginRoute.Method, LoginRoute.URI, LoginRoute.Func)
