@@ -468,3 +468,29 @@ paths:
             condition that prevented it from fulfilling the request.
       security:
       - Bearer: []
+    delete:
+      tags:
+      - social media
+      summary: Delete post
+      description: Endpoint to delete a post
+      parameters:
+      - name: id
+        in: path
+        description: Post id to be deleted
+        required: true
+        schema:
+          type: integer
+      responses:
+        204:
+          description: No content - Post deleted successfully.
+        400:
+          description: Bad request - Invalid id.
+        403:
+          description: Forbidden - You've tried to delete someone else's post.
+        404:
+          description: Not found - Any post match the provided id.
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+      security:
+      - Bearer: []
