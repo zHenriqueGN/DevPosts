@@ -494,3 +494,27 @@ paths:
             condition that prevented it from fulfilling the request.
       security:
       - Bearer: []
+  /posts/user_posts/{id}:
+    get:
+      tags:
+      - social media
+      summary: Get user posts
+      description: Endpoint to get all the posts from a given user
+      parameters:
+      - name: id
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Ok - Posts returned successfully.
+        400:
+          description: Bad request - Invalid id.
+        500:
+          description: Internal Server Error - The server encountered an unexpected
+            condition that prevented it from fulfilling the request.
+      security:
+      - Bearer: []
+    
