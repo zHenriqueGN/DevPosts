@@ -12,5 +12,5 @@ func init() {
 
 func main() {
 	app := router.Generate()
-	app.Listen(fmt.Sprintf(":%s", config.APIPort))
+	app.Listen(fmt.Sprintf(":%s", "8000"))
 }
